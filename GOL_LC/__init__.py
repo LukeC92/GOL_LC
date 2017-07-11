@@ -1,40 +1,39 @@
+"""
+Luke Carroll's implementation of The Game Of Life.
+
+"""
+
 import numpy as np
 import matplotlib.pyplot as plt
 
-blip = np.zeros((5,5))
-blip[1,2] = 1
-blip[2,2] = 1
-blip[3,2] = 1
 
-print("hello")
-print(blip)
-plt.pcolormesh(blip, cmap='Greys')
-plt.grid(color='black')
-plt.show()
+
 
 
 def sumcells(x, y, A):
-    if(y=0)
-        if(x=0)
+    
+    if(y==0):
+        if(x==0):
             return A[x+1, y]+A[x+1,y+1]+A[x,y+1]
-        else if(0<x<A.shape[0]-1):
+        elif(0<x<A.shape[0]-1):
             return A[x-1,y]+A[x-1,y+1]+A[x,y+1]+A[x+1,y+1]+A[x+1,y]
-        else if(x=A.shape[0]-1):
+        elif(x==A.shape[0]-1):
             return A[x-1,y]+A[x-1,y+1]+A[x,y+1]
-    else if(0<y<A.shape[1]-1):
-        if(x=0):
+    elif(0<y<A.shape[1]-1):
+        if(x==0):
             return A[x,y-1]+A[x,y+1]+A[x+1,y-1]+A[x+1,y]+A[x+1,y+1]
-        else if(0<x<A.shape[0]-1):
+        elif(0<x<A.shape[0]-1):
             return A[x-1,y-1]+A[x-1,y]+A[x-1, y+1]+A[x,y-1]+A[x,y+1]+A[x+1,y-1]+A[x+1,y]+A[x+1,y+1]
-        else if(x=A.shape[0]-1):
+        elif(x==A.shape[0]-1):
             return A[x-1,y-1]+A[x-1,y]+A[x-1, y+1]+A[x,y-1]+A[x,y+1]
-    else if(y=A.shape[1]-1):
-        if(x=0):
+    elif(y==A.shape[1]-1):
+        if(x==0):
             return A[x,y-1]+A[x+1,y-1]+A[x+1,y]
-        else if(0<x<A.shape[0]-1):
+        elif(0<x<A.shape[0]-1):
             return A[x-1,y-1]+A[x-1,y]+A[x,y-1]+A[x+1,y-1]+A[x+1,y]
-        else if(x=A.shape[0]-1):
+        elif(x==A.shape[0]-1):
             return A[x-1,y-1]+A[x-1,y]+A[x,y-1]
+
 
     
     #else
@@ -43,9 +42,22 @@ def sumcells(x, y, A):
 
 
 def alive(x, y, A):
+    """
+    This function determines if a cell is alive or dead in the next iteration.
+    
+    Parameters
+    ----------
+    x : int
+        The x index to use
+    y : int
+        They index to use
+    A : np.array
+        The GOL board to iterate
+        
+    """
     v = A[x,y]
     t = sumcells(x,y,A)
-    return ((v=1 and t=2,3) or (v=0 and t=3))
+    return ((v==1 and t in [2,3]) or (v==0 and t==3))
     
     
     #if((v=1 and t=2,3) or (v=1 and t=3))
@@ -68,4 +80,18 @@ def update(A):
     
     
 #want to take the numbers from sumcells and build a new array filled with 1s and 0s depending on the values of sumcells
+
+
+if __name__ == '__main__':
+    blip = np.zeros((5,5))
+    blip[1,2] = 1
+    blip[2,2] = 1
+    blip[3,2] = 1
+    
+    print("hello")
+    print(blip)
+    plt.pcolormesh(blip, cmap='Greys')
+    plt.grid(color='black')
+    plt.show()
+
     
