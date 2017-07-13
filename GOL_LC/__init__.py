@@ -1,7 +1,9 @@
 """
 Luke Carroll's implementation of The Game Of Life.
 
-My attempt at an implementation of the Game of Life. The end target is for you to be able iterate the game step by step or run it indefinitely.
+My implementation of the Game of Life. By editing the code at the bottom
+you can enter a particular starting state. By running the program you
+will then see the game play out.
 
 """
 
@@ -13,17 +15,12 @@ import matplotlib.animation as animation
 from PIL import Image
 np.set_printoptions(threshold=np.inf)
 
-#blip = np.zeros((5,5))
-#blip[1,2] = 1
-#blip[2,2] = 1
-#blip[3,2] = 1
-
-
 
 
 def sumcells(x, y, A):
     """
-    This gives the number of living cells adjacent to cell A[x,y].
+    This gives the number of living cells adjacent to cell A[x,y] in the
+    current generation.
     
     Parameters
     ----------
@@ -33,6 +30,8 @@ def sumcells(x, y, A):
         The y index of the cell being considered
     A : np.array
         The GOL board to iterate
+    return : int
+        The number of living cells adjacent to cell A[x,y]
     
     """
     if(y==0):
@@ -46,7 +45,8 @@ def sumcells(x, y, A):
         if(x==0):
             return A[x,y-1]+A[x,y+1]+A[x+1,y-1]+A[x+1,y]+A[x+1,y+1]
         elif(0<x<A.shape[0]-1):
-            return A[x-1,y-1]+A[x-1,y]+A[x-1, y+1]+A[x,y-1]+A[x,y+1]+A[x+1,y-1]+A[x+1,y]+A[x+1,y+1]
+            return A[x-1,y-1]+A[x-1,y]+A[x-1, y+1]+A[x,y-1]+A[x,y+1] \
+                   +A[x+1,y-1]+A[x+1,y]+A[x+1,y+1]
         elif(x==A.shape[0]-1):
             return A[x-1,y-1]+A[x-1,y]+A[x-1, y+1]+A[x,y-1]+A[x,y+1]
     elif(y==A.shape[1]-1):
@@ -58,48 +58,61 @@ def sumcells(x, y, A):
             return A[x-1,y-1]+A[x-1,y]+A[x,y-1]
 
 
-    
-    #else
-        #return -999 wanted to just use the first if statement and restrict things so the system only operates within aA 1 cell buffer around the edge
-    
-
-
-
 def alive(x, y, A):
     """
-    This function determines if aA cell is alive or dead in the next iteration.
+    This function determines if a cell is alive or dead in the next
+    generation.
     
     Parameters
     ----------
     x : int
-        The x index to use
+        The x index of the cell being considered
     y : int
-        The y index to use
+        The y index of the cell being considered
     A : np.array
         The GOL board to iterate
+    return : bool
+        True if A[x,y] should be alive in the next generation, 
+        false otherwise.
         
     """
     v = A[x,y]
     t = sumcells(x,y,A)
     return ((v==1 and t in [2,3]) or (v==0 and t==3))
     
+   
+def updatecell(x,y,A):
+    """
+    This function will return the value a cell should take in the next
+    generation of Life
     
-    #if((v=1 and t=2,3) or (v=1 and t=3))
-       #return true
-    #else if((v=1 and t!=2,3) or (v=0 and t!=3))
-        #did have statement saying t!=-999 cause of error in previous tactic where I restricted the functions behaviour to within aA boundary
-        #return false
-    #else return "You've done something wrong" now largely useless as 
-    
-    
-def updatecell(x,y, A):
+    Parameters
+    ----------
+    x : int
+        The x index of the cell being considered
+    Y : int
+        The y index of the cell being considered
+    A : np.array
+        The GOL board to iterate
+    return : int
+        The value A[x,y] should take in the next generation
+    """
     if(alive(x,y,A)): return 1
     else: return 0
     
-
-
-
+    
 def update(A):
+    """
+    This function will return the state an entered GOL board should be
+    in the next generation.
+    
+    Parameters
+    ----------
+    A : np.array
+        The GOL board to iterate
+    return : np.array
+        The state the GOL board should be in the next generation
+    """
     B = np.copy(A)
     for i in range(0, B.shape[0]):
         for j in range(0,B.shape[1]):
@@ -108,61 +121,51 @@ def update(A):
 
 
 
-
-
 if __name__ == '__main__':
-    blip = np.zeros((5,5))
-    blip[1,2] = 1
-    blip[2,2] = 1
-    blip[3,2] = 1
+    #defining a small array on which the blinker oscillator is plotted
+    blinker = np.zeros((5,5))
+    blinker[1,2] = 1
+    blinker[2,2] = 1
+    blinker[3,2] = 1
     
+    #the state the blinker should be in after 1 generation
+    blinker_update = np.zeros((5,5))
+    blinker_update[2,1] = 1
+    blinker_update[2,2] = 1
+    blinker_update[2,3] = 1
     
-    blip_update = np.zeros((5,5))
-    blip_update[2,1] = 1
-    blip_update[2,2] = 1
-    blip_update[2,3] = 1
+    #a possible representation of the Gosper glider gun found from a 
+    #website via Google
+    gliderG = np.array([
+        [ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 ],
+        [ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 ],
+        [ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0 ],
+        [ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0 ],
+        [ 0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0 ],
+        [ 0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0 ],
+        [ 0,1,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,1,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 ],
+        [ 0,1,1,0,0,0,0,0,0,0,0,1,0,0,0,1,0,1,1,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0 ],
+        [ 0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0 ],
+        [ 0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 ],
+        [ 0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 ],
+        [ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 ],
+        [ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 ]])
     
-    gliderG = np.array([[ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 ],[ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 ],
-  [ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0 ],
-  [ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0 ],
-  [ 0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0 ],
-  [ 0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0 ],
-  [ 0,1,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,1,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 ],
-  [ 0,1,1,0,0,0,0,0,0,0,0,1,0,0,0,1,0,1,1,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0 ],
-  [ 0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0 ],
-  [ 0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 ],
-  [ 0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 ],
-  [ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 ],[ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 ]])
-    
-    #print(gliderG)
-    
-    
-    # Using this GIF: http://www.videogamesprites.net/FinalFantasy1/Party/Before/Fighter-Front.gif
 
-    
-    
+    #various images relating to the Gosper Glider to be experiement with
     a = Image.open('/home/h05/lcarroll/Documents/Learning Python/Gospers_glider_gun.gif')
     b = Image.open('/home/h05/lcarroll/Documents/Learning Python/start of glider.png')
     c = Image.open('/home/h05/lcarroll/Documents/Learning Python/Gospers_glider_gun_firstframe.jpg')
     
     #a.show()
-    c.show()
-#    transparency = a.info['transparency'] 
-#    a.save('test1.png', transparency=transparency)
-#    
-#    a.seek(a.tell()+1)
-#    transparency = a.info['transparency'] 
-#    a.save('test2.png', transparency=transparency)
-    
-    # First frame comes out perfect, second frame (test2.png) comes out black,
-    # but in the "right shape", ie 
-    # http://i.stack.imgur.com/5GvzC.png
-    
-    
+    #c.show()
+
+
+
 #    print(type(a))
 #    print(a.tell())
 #    print(a.size)
-    print(c.size)
+    #print(c.size)
 
     #print(list(a.getdata()))
     aA = np.array(a.getdata())
@@ -178,24 +181,9 @@ if __name__ == '__main__':
 #    print(aA.shape)
     print(cA.shape)
     print(cAB.shape)
-
-    print(cAB)
-    
-
-    
-
-
     #print(b.getdata())
-
     #print(type(bA))
 
-
-  
-    
-
-    
-
-    
     #print(cA)
     #print(aR)
     #print(cAB)
@@ -203,36 +191,22 @@ if __name__ == '__main__':
     #print(c0)
     
     
-#    def iter_frames(a):
-#        try:
-#            i= 0
-#            while 1:
-#                a.1seek(i)
-#                imframe = a.copy()
-#                if i == 0: 
-#                    palette = imframe.getpalette()
-#                else:
-#                    imframe.putpalette(palette)
-#                yield imframe
-#                i += 1
-#        except EOFError:
-#            pass
-#
-#            for i, frame in enumerate(iter_frames(a)):
-#                frame.save('test%bA.png' % i,**frame.info)
-                
-
-
-
+    #a figure and graph to be used within ani to animate a Game of Life
     fig, ax = plt.subplots()
-    
-    
     graph = ax.pcolormesh(c0, cmap='Greys')
     plt.grid(color='black')
     
-    
-    
     def animate(B):
+        """
+        This function updates a given array B and graph's input to it, 
+        thus animating from one generation to the next
+        
+        Parameters
+        ----------
+        B : np.array
+            The GOL board to be updated
+        return : The updated state of the GOL board
+        """
         B[:] = update(B)
         C = B.flatten()
         graph.set_array(C)
@@ -240,19 +214,18 @@ if __name__ == '__main__':
         return graph,
     
     
-    #The useer thought out this was unnecessary, turns out it is necessary.
+    #The user thought out this was unnecessary, turns out it is necessary.
     def init():
+        """
+        Sets the initial state for the FuncAnimation. Even though this 
+        function changes nothing
+        it is necessary to include it for a recursive animation.
+        """
         return graph,
     
     
-    
-    ani = animation.FuncAnimation(fig, animate, [c0], init_func=init, interval=100, blit=False)
+    #animates a game of life with the start state listed as the 3rd 
+    #parameter and in graph above
+    ani = animation.FuncAnimation(fig, animate, [c0], init_func=init, 
+                                  interval=100, blit=False)
     plt.show()
-    
-    
-    
-    
-
-    
-
-        
